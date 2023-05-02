@@ -1,14 +1,14 @@
 import styles from "./TodoItem.module.scss";
 
-import { useState, useContext } from "react";
-import { TodoContext } from "../../contexts/TodoContext";
+import { useState } from "react";
+import { useTodo } from "../../hooks/useTodo";
 import { TodoForm } from "./TodoForm";
 import { HiCheck, HiPencil, HiTrash } from "react-icons/hi";
 import { convertDate } from "../../utils/DateUtils";
 
 export function TodoItem({ todo }) {
   // ** Consume
-  const { editTodo, deleteTodo } = useContext(TodoContext);
+  const { editTodo, deleteTodo } = useTodo();
 
   // state
   const [isEdit, setIsEdit] = useState(false);

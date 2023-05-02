@@ -1,5 +1,5 @@
-import { useState, useContext } from "react"; // *
-import { TodoContext } from "../contexts/TodoContext"; // *
+import { useState } from "react"; // *
+import { useTodo } from "../hooks/useTodo";
 import {
   FaInbox,
   FaRegCalendar,
@@ -9,7 +9,7 @@ import {
 import { Button } from "../components/Common/Button";
 
 export function SideBar() {
-  const { selectList } = useContext(TodoContext); // *
+  const { selectList } = useTodo(); // *
 
   const [selectedIndex, setSelectedIndex] = useState(0);
 
