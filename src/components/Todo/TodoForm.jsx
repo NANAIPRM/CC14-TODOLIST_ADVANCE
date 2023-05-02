@@ -18,10 +18,11 @@ TodoForm.propTypes = {
   }),
 };
 
-export function TodoForm({ textConfirm, onSetShow, oldTodo, onEditTodo }) {
+export function TodoForm({ textConfirm, onSetShow, oldTodo }) {
   // Consumer : TodoContext
   const sharedObj = useContext(TodoContext);
   const addTodo = sharedObj.addTodo;
+  const editTodo = sharedObj.editTodo;
 
   // State
   const [task, setTask] = useState(oldTodo?.task || "");
@@ -58,7 +59,7 @@ export function TodoForm({ textConfirm, onSetShow, oldTodo, onEditTodo }) {
       onSetShow(false);
     } else if (validTask && oldTodo) {
       // console.log(oldTodo.id)
-      onEditTodo(oldTodo.id, { ...oldTodo, task });
+      editTodo(oldTodo.id, { ...oldTodo, task });
       onSetShow(false);
     }
   };

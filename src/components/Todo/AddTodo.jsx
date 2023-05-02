@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styles from "./AddTodo.module.scss";
 import { TodoForm } from "./TodoForm";
-export function AddTodo({ onAddTodo }) {
+export function AddTodo() {
   const [isAddMode, setIsAddMode] = useState(false);
 
   const handleClickAdd = () => setIsAddMode(true);
