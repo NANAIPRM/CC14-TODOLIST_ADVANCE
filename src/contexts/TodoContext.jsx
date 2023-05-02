@@ -1,5 +1,6 @@
 import { useState, useEffect, createContext } from "react";
 import * as TodoAPIServices from "../services/todoServices";
+import { getSevenDayRange } from "../utils/DateUtils";
 // Create Context => Context Object (NAME)  ใช้ได้ 2 ที่
 // #1 Provider : Wrapper Component => Shared Data,Logic ได้
 // #2 Consumer : Component ที่ต้องการใช้ Data,Logic (Subscribe Component)
@@ -100,16 +101,42 @@ function TodoContextProvider(props) {
     }
   };
 
-  const sharedObj = {
-    magic: 42,
-    todos: todos,
-    todosFilter: todosFilter,
-    addTodo: addTodo,
-    editTodo: editTodo,
-    deleteTodo: deleteTodo,
+  // FILTER BY LISTS
+  const selectList = (selectedIndex) => {
+    const [today, nextSevenDay] = getSevenDayRange();
+    if (selectedIndex == 0) {
+      setTodosFilter(todos);
+    } else if (selectedIndex == 1) {
+      const newTodo = todos.filter((todo) => todo.date === today);
+      setTodosFilter(newTodo);
+    } else if (selectedIndex == 2) {
+      const newTodo = todos.filter(
+        (todo) => todo.date >= today && todo.date <= nextSevenDay
+      );
+      setTodosFilter(newTodo);
+    }
   };
+
+  // SEARCH TODO
+  const searchTodo = (searchValue) => {
+    const newTodo = todos.filter((todo) =>
+      todo.task.toLowerCase().includes(searchValue.toLowerCase())
+    );
+    setTodosFilter(newTodo);
+  };
+
   return (
-    <TodoContext.Provider value={sharedObj}>
+    <TodoContext.Provider
+      value={{
+        todos,
+        todosFilter,
+        addTodo,
+        editTodo,
+        deleteTodo,
+        selectList,
+        searchTodo,
+      }}
+    >
       {props.children}
     </TodoContext.Provider>
   );
