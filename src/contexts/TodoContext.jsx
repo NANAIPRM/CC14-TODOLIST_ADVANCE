@@ -3,7 +3,7 @@ import * as TodoAPIServices from "../services/todoServices";
 import { getSevenDayRange } from "../utils/DateUtils";
 import todoReducer from "../reducers/todoReducer";
 import { INIT_TODO } from "../reducers/todoReducer";
-import { FETCH_TODO } from "../reducers/todoReducer";
+import { FETCH_TODO, ADD_TODO } from "../reducers/todoReducer";
 // Create Context => Context Object (NAME)  ใช้ได้ 2 ที่
 // #1 Provider : Wrapper Component => Shared Data,Logic ได้
 // #2 Consumer : Component ที่ต้องการใช้ Data,Logic (Subscribe Component)
@@ -47,13 +47,9 @@ function TodoContextProvider(props) {
       const now = new Date().toISOString().slice(0, 10);
       const newTodoObj = { task: task, status: false, date: now };
       const response = await TodoAPIServices.createTodo(newTodoObj);
-      const createdTodoObj = response.data.todo;
 
       // #2 Sync with Internal State : UI State
-      const newTodoLists = [createdTodoObj, ...todos];
-      // NOTE : not concern about time yet! todo for today can appear in next 7 days lists
-      setTodos(newTodoLists);
-      setTodosFilter(newTodoLists);
+      dispatch({ type: ADD_TODO, payload: { newTodo: response.data.todo } });
     } catch (error) {
       // #3 Error Handler eg. modal Error, Sweat Alert
       console.log(error.response.data);
