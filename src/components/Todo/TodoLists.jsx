@@ -3,9 +3,8 @@ import { useTodo } from "../../hooks/useTodo";
 import { TodoItem } from "./TodoItem";
 
 export function TodoLists() {
-  // const sharedObj = useContext(TodoContext);
-  // const todosFilter = sharedObj.todosFilter;
-  const { todosFilter } = useTodo();
+  const { todosFilter } = useTodo(); // #3
+
   return (
     <ul className={styles.todoList}>
       {todosFilter?.map((item) => (

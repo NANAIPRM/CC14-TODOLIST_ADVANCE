@@ -1,5 +1,4 @@
 import styles from "./TodoItem.module.scss";
-
 import { useState } from "react";
 import { useTodo } from "../../hooks/useTodo";
 import { TodoForm } from "./TodoForm";
@@ -8,8 +7,7 @@ import { convertDate } from "../../utils/DateUtils";
 
 export function TodoItem({ todo }) {
   // ** Consume
-  const { editTodo, deleteTodo } = useTodo();
-
+  const { editTodo, deleteTodo } = useTodo(); //#3
   // state
   const [isEdit, setIsEdit] = useState(false);
 

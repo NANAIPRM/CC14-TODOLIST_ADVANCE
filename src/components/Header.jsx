@@ -1,9 +1,11 @@
 import { useTodo } from "../hooks/useTodo";
 import { FaHome, FaSearch } from "react-icons/fa";
 import { useState } from "react";
-export function Header() {
-  const { searchTodo } = useTodo(); // *
 
+// Function Component
+export function Header() {
+  // React HOOK
+  const { searchTodo } = useTodo(); // *3
   const [searchValue, setSearchValue] = useState("");
 
   const handleChange = (e) => {

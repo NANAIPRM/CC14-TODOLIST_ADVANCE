@@ -1,26 +1,27 @@
-import { useEffect, createContext, useReducer } from "react";
+import { useState, useEffect, createContext, useContext } from "react";
 import * as TodoAPIServices from "../services/todoServices";
-import todoReducer from "../reducers/todoReducer";
-import { INIT_TODO } from "../reducers/todoReducer";
-import {
-  FETCH_TODO,
-  ADD_TODO,
-  EDIT_TODO,
-  DELETE_TODO,
-  SEARCH_TODO,
-  SELECT_TODO_LIST,
-} from "../reducers/todoReducer";
+import { getSevenDayRange } from "../utils/DateUtils";
+// Create Context => Context Object (NAME)  ใช้ได้ 2 ที่
+// #1 Provider : Wrapper Component => Shared Data,Logic ได้
+// #2 Consumer : Component ที่ต้องการใช้ Data,Logic (Subscribe Component)
 export const TodoContext = createContext();
 
+// สร้าง Provider : Wrapper Component
 function TodoContextProvider(props) {
-  const [allTodoList, dispatch] = useReducer(todoReducer, INIT_TODO);
+  const [todos, setTodos] = useState([]);
+  const [todosFilter, setTodosFilter] = useState([]);
 
   // GET : FETCH
   async function fetchAllTodo() {
     try {
-      const response = await TodoAPIServices.getAllTodo();
-      dispatch({ type: FETCH_TODO, payload: { todos: response.data.todos } });
+      // #1 : Sync with External Service
+      const response = await TodoAPIServices.getAllTodos();
+
+      // #2 : Sync with Internal State
+      setTodos(response.data.todos);
+      setTodosFilter(response.data.todos);
     } catch (error) {
+      // #3 Error handler
       console.log(error.response.status);
     }
   }
@@ -36,8 +37,13 @@ function TodoContextProvider(props) {
       const now = new Date().toISOString().slice(0, 10);
       const newTodoObj = { task: task, status: false, date: now };
       const response = await TodoAPIServices.createTodo(newTodoObj);
+      const createdTodoObj = response.data.todo;
+
       // #2 Sync with Internal State : UI State
-      dispatch({ type: ADD_TODO, payload: { newTodo: response.data.todo } });
+      const newTodoLists = [createdTodoObj, ...todos];
+      // NOTE : not concern about time yet! todo for today can appear in next 7 days lists
+      setTodos(newTodoLists);
+      setTodosFilter(newTodoLists);
     } catch (error) {
       // #3 Error Handler eg. modal Error, Sweat Alert
       console.log(error.response.data);
@@ -46,40 +52,84 @@ function TodoContextProvider(props) {
 
   // PUT : edit
   const editTodo = async (todoId, updateObj) => {
+    // #1 Sync With External State/Service : Database
+    // #2 Sync with Internal State : UI State
+    // #3 Error Handler eg. modal Error, Sweat Alert
+
     try {
+      // #1 Sync With External State/Service : Database
+      // const response = await axios.put(`http://localhost:8080/todos/${todoId}`, updateObj);
       const response = await TodoAPIServices.updateTodo(updateObj);
-      dispatch({
-        type: EDIT_TODO,
-        payload: { id: todoId, updatedTodo: response.data.todo },
-      });
+      const updatedTodoObj = response.data.todo;
+
+      // #2  Sync with Internal State : UI State
+      const foundedIndex = todos.findIndex((todo) => todo.id === todoId);
+      if (foundedIndex !== -1) {
+        const newTodoLists = [...todos];
+        // newTodoLists[foundedIndex] = { ...newTodoLists[foundedIndex], ...updatedTodoObj };
+        newTodoLists[foundedIndex] = Object.assign(
+          {},
+          newTodoLists[foundedIndex],
+          updatedTodoObj
+        );
+        setTodos(newTodoLists);
+        setTodosFilter(newTodoLists);
+      }
     } catch (error) {
+      // #3 Error Handler eg. modal Error, Sweat Alert
       console.log(error.response.data);
     }
   };
 
   // DELETE : delete
   const deleteTodo = async (todoId) => {
+    // #1 Sync With External State/Service : Database
+    // #2 Sync with Internal State : UI State
+    // #3 Error Handler eg. modal Error, Sweat Alert
     try {
+      // #1 Sync With External State/Service : Database
+      // await axios.delete(`http://localhost:8080/todos/${todoId}`)
       await TodoAPIServices.deleteTodo(todoId);
-      dispatch({ type: DELETE_TODO, payload: { id: todoId } });
+
+      // #2 Sync with Internal State : UI State
+      const newTodoLists = todos.filter((todo) => todo.id !== todoId);
+      setTodos(newTodoLists);
+      setTodosFilter(newTodoLists);
     } catch (error) {
+      // #3 Error Handler eg. modal Error, Sweat Alert
       console.log(error.response.data);
     }
   };
 
   // FILTER BY LISTS
-  const selectList = (selectedIndex) =>
-    dispatch({ type: SELECT_TODO_LIST, payload: { selectedIndex } });
+  const selectList = (selectedIndex) => {
+    const [today, nextSevenDay] = getSevenDayRange();
+    if (selectedIndex == 0) {
+      setTodosFilter(todos);
+    } else if (selectedIndex == 1) {
+      const newTodo = todos.filter((todo) => todo.date === today);
+      setTodosFilter(newTodo);
+    } else if (selectedIndex == 2) {
+      const newTodo = todos.filter(
+        (todo) => todo.date >= today && todo.date <= nextSevenDay
+      );
+      setTodosFilter(newTodo);
+    }
+  };
 
   // SEARCH TODO
-  const searchTodo = (searchValue) =>
-    dispatch({ type: SEARCH_TODO, payload: { searchText: searchValue } });
+  const searchTodo = (searchValue) => {
+    const newTodo = todos.filter((todo) =>
+      todo.task.toLowerCase().includes(searchValue.toLowerCase())
+    );
+    setTodosFilter(newTodo);
+  };
 
   return (
     <TodoContext.Provider
       value={{
-        todos: allTodoList.todos,
-        todosFilter: allTodoList.todosFilter,
+        todos,
+        todosFilter,
         addTodo,
         editTodo,
         deleteTodo,

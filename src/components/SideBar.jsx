@@ -1,4 +1,4 @@
-import { useState } from "react"; // *
+import { useState } from "react"; // *1
 import { useTodo } from "../hooks/useTodo";
 import {
   FaInbox,
@@ -9,7 +9,7 @@ import {
 import { Button } from "../components/Common/Button";
 
 export function SideBar() {
-  const { selectList } = useTodo(); // *
+  const { selectList } = useTodo(); // *3
 
   const [selectedIndex, setSelectedIndex] = useState(0);
 
