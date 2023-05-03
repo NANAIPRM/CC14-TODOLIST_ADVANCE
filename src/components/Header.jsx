@@ -1,6 +1,10 @@
-import { useTodo } from "../hooks/useTodo";
-import { FaHome, FaSearch } from "react-icons/fa";
 import { useState } from "react";
+import { FaHome, FaSearch } from "react-icons/fa";
+import UserPhoto from "../assets/user.jpg";
+// import Avatar  from '@mui/material/Avatar';
+import { Avatar } from "@mui/material";
+
+import { useTodo } from "../hooks/useTodo";
 
 // Function Component
 export function Header() {
@@ -14,10 +18,13 @@ export function Header() {
   };
   return (
     <header className="header">
+      {/* Icon */}
       <span className="header__icon">
         <FaHome size={25} color="white" />
       </span>
-      <h1>Todoist-Pavit</h1>
+      {/* App Name */}
+      <h1>NANINE TODOLIST</h1>
+      {/* Search bar */}
       <div className="header__search__container">
         <span className="header__search__icon">
           <FaSearch />
@@ -28,6 +35,14 @@ export function Header() {
           placeholder="search"
           onChange={handleChange}
           value={searchValue}
+        />
+      </div>
+      {/* Avatar */}
+      <div>
+        <Avatar //เหมือน function component ที่รับ prop พวกนี้ได้
+          src={UserPhoto}
+          alt="user-profile"
+          sx={{ width: 40, height: 40, cursor: "pointer" }}
         />
       </div>
     </header>

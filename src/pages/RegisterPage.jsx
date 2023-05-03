@@ -16,7 +16,7 @@ function RegisterPage() {
           <form className="flex flex-col gap-4">
             <input
               type="email"
-              placeholder="email"
+              placeholder="example@mail.com"
               className="p-6 text-4xl outline-none rounded-lg border-2"
             />
             <input

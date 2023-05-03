@@ -1,4 +1,5 @@
 import AuthPhoto from "../assets/auth.png";
+
 function LoginPage() {
   return (
     <div className="h-screen flex">
