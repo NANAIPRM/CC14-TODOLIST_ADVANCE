@@ -2,7 +2,7 @@ import AuthPhoto from "../assets/auth.png";
 
 function LoginPage() {
   return (
-    <div className="h-screen flex">
+    <div className="h-screen flex bg-primary-100">
       {/* Left */}
       <div className="flex-1 flex max-lg:hidden justify-center items-center">
         {/* <div className='flex-1 hidden lg:flex justify-center items-center'> */}
